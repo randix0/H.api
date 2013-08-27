@@ -41,7 +41,7 @@
     <h2>Links with href="#!". If H.config.useStates set TRUE - do ajax load</h2>
     <a href="#!/prev">x-prev</a>
     <a href="#!/">x-index</a>
-    <a href="#1/next">x-next</a>
+    <a href="#!/next">x-next</a>
 </nav>
 
 <section id="mainContent">
