@@ -1,7 +1,7 @@
 H = {
     config: {
-        useStates: false,
-        useHashes: false
+        useStates: true,
+        useHashes: true
     },
     html5ready: null,
     hashReady: null,
