@@ -1,12 +1,15 @@
 H = {
     config: {
         useStates: true,
-        useHashes: true
+        useHashes: true,
+        contentDOM: '#mainContent'
+    },
+    routeCallbacks: {
+        default: {dataType: 'html', callback: function(data){$(H.config.contentDOM).html(data);}}
     },
     html5ready: null,
     hashReady: null,
     currentsURI: null,
-    contentDOM: '#mainContent',
     html5supports: function(){
         return !!(window.history && history.pushState);
     },
@@ -26,10 +29,20 @@ H = {
     },
     binder: function(){
         if (H.config.useStates){
+            history.replaceState({pushed: true}, null, window.location.href);
             $('.x').bind('click', function(e){
-                //console.log(this.href);
-                H.ajaxGetContent(this.href);
-                history.pushState(null, null, this.href);
+                var link = $(this).attr('href');
+                if (link.substr(0,1) != '/') {
+                    var temp_link = link.replace(location.protocol+'//'+location.hostname, '');
+                    if (temp_link == link && link.substr(0,4) != 'http') {
+                        return true; //external link
+                    } else {
+                        link = temp_link;
+                    }
+                }
+
+                H.ajaxGetContent(link);
+                history.pushState({pushed: true}, null, link);
                 e.preventDefault();
             });
 
@@ -50,9 +63,11 @@ H = {
             }, 1);
         }
     },
-    popstate: function(){
+    popstate: function(e){
         if (H.currentsURI != location.pathname) {
-            H.ajaxGetContent(location.pathname);
+            if (e.state && typeof(e.state.pushed) != 'undefined' && e.state.pushed){
+                H.ajaxGetContent(location.pathname);
+            }
         }
     },
     hashchange: function(){
@@ -62,15 +77,19 @@ H = {
             H.ajaxGetContent(link);
         }
     },
-    ajaxGetContent: function(href){
+    ajaxGetContent: function(link){
+        var r = link.match(/\/(\w+)/i);
+        var route = 'default';
+        if (r && typeof(r[1]) != 'undefined' && r[1] in H.routeCallbacks && typeof(H.routeCallbacks[r[1]].callback) == 'function') {
+            route = r[1];
+        }
+        H.currentsURI = link;
         $.ajax({
-            url: href,
+            url: link,
             type: 'GET',
-            dataType: 'html',
+            dataType: (typeof(H.routeCallbacks[route].dataType) != 'undefined')?H.routeCallbacks[route].dataType:'html',
             success: function(data){
-                console.log(data);
-                $(H.contentDOM).html(data);
-                H.currentsURI = data;
+                H.routeCallbacks[route].callback(data);
             }
         });
     }
@@ -79,3 +98,7 @@ H = {
 $(document).ready(function(){
     H.init();
 });
+
+/*
+H.routeCallbacks['next'] = {callback: function(data){ console.log('nextCall:'+data); }};
+*/

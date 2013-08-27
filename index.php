@@ -3,6 +3,7 @@
     function isAjax(){
         $result = false;
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+        //if ($_REQUEST && isset($_REQUEST['ajax']) && $_REQUEST['ajax'])
             $result = true;
         return $result;
     }
@@ -32,6 +33,13 @@
 
 <nav>
     <h2>Links with class="x". If H.config.useStates set TRUE - do ajax load</h2>
+    <a class="x" href="/prev">x-prev</a>
+    <a class="x" href="/">x-index</a>
+    <a class="x" href="/next">x-next</a>
+</nav>
+
+<nav>
+    <h2>Same as higher, but with attribute data-target="(main|popup)"</h2>
     <a class="x" href="/prev">x-prev</a>
     <a class="x" href="/">x-index</a>
     <a class="x" href="/next">x-next</a>
