@@ -8,6 +8,8 @@ jQuery-based History Api plugin
 3. add id="mainContent" to elements to load data
 4. modify backend sending ajax|non-ajax data
 
+P.S. As default it uses html5 pushState while composing window.pathname, otherwise - hashes ('#!/foo');
+
 
 Example: index.php
 ----------------------------------------
